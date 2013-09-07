@@ -12,7 +12,7 @@
 #include<sys/shm.h>
 #include<time.h>
 #define PERM S_IRUSR|S_IWUSR  
-#define MYPORT 3490  //宏定义定义通信端口
+#define MYPORT 8080//3490  //宏定义定义通信端口
 #define BACKLOG 10 //宏定义，定义服务程序可以连接的最大客户数量
 #define WELCOME "|----------Welcome to the chat room! ----------|"  //宏定义，当客户端连接服务端时，想客户发送此欢迎字符串
 //转换函数，将int类型转换成char *类型
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
    sockfd = bindPort(MYPORT);//绑定端口
    while(1)
    {     
-     if(listen(sockfd,BACKLOG) == -1)//在指定端口上监听
+     if(listen(sockfdsockfd,BACKLOG) == -1)//在指定端口上监听
      {
        perror("listen");
        exit(1);
