@@ -108,6 +108,17 @@ int bindPort(unsigned short int port)
     return sockfd;
 }
 
+int sendResponse(int fd, std::string cmd, std::string rps)
+{
+    std::string response = cmd + "@" + rps;
+    if(send(fd,response.c_str(),response.length(),0) == -1)
+    {
+        perror("send error");
+        return -1;
+    }
+    
+    return 0;
+}
 
 COnlineLogic g_onlineLogic;
 int main(int argc, char *argv[])
@@ -183,10 +194,11 @@ int main(int argc, char *argv[])
                     if((recvbytes = recv(clientfd,buf,255,0)) <= 0)
                     {
                         perror("recv1 error");
+                        g_onlineLogic.updateOnlineStat(clientfd, ONLINE_STAT_OFF);
+                        g_onlineLogic.displayOnlineShmat();
+                        
                         close(clientfd);
                         raise(SIGKILL);
-                        g_onlineLogic.updateOnlineStat(onlineShmid, clientfd, ONLINE_STAT_OFF);
-                        g_onlineLogic.displayOnlineShmat(onlineShmid);
                         exit(1);
                     }
                     
@@ -206,6 +218,17 @@ int main(int argc, char *argv[])
                 //子进程用于发送信息
                 else if(pid == 0)
                 {
+                    int fdStat = g_onlineLogic.getOnlineStat(clientfd);
+                    if( ONLINE_STAT_OFF == fdStat )
+                    {
+                        printf("client fd:%d stat is %d offline!\n", clientfd, fdStat);
+                        exit(0);
+                    }
+                    else
+                    {
+                        printf("client fd:%d stat is %d online!\n", clientfd, fdStat);
+                    }
+                    
                     sleep(1);
                     printf("r_addr:|%s| temp:|%s|\n",r_addr, temp);
                     
@@ -216,7 +239,6 @@ int main(int argc, char *argv[])
                         get_cur_time(time_str);
                         //strcat(r_addr,time_str);
                         strcpy(temp,r_addr);
-                        memset(r_addr, '\0', 255);
                         printf("temp:%s\n",temp);
 
                         const char *delims = { "@" };
@@ -241,16 +263,20 @@ int main(int argc, char *argv[])
                         
                         if( 0 == strcmp(cmd, "reg") )
                         {
-                            g_onlineLogic.regOnlineShmat(onlineShmid, rbody, clientfd);
-                            g_onlineLogic.displayOnlineShmat(onlineShmid);
+                            g_onlineLogic.regOnlineShmat(rbody, clientfd);
+                            g_onlineLogic.displayOnlineShmat();
+                        }
+                        else if( 0 == strcmp(cmd, "onlineinfo") )
+                        {
+                            std::string list;
+                            g_onlineLogic.getOnlineList(list);
+                            
+                            //send temp buffer
+                            sendResponse(clientfd,cmd,list);
                         }
                         
-                        //send temp buffer
-                        //if(send(clientfd,temp,strlen(temp),0) == -1)
-                        //{
-                        //    perror("send error");
-                        //}
-                        memset(temp, '\0', 1024);
+                        memset(r_addr, '\0', 1024);
+                        memset(temp, '\0', 255);
                     }
                 }
                 else

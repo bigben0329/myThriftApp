@@ -49,14 +49,21 @@ public:
     ~COnlineLogic();
     
     key_t initOnlineShmat();
-    int displayOnlineShmat(key_t shmid);
-    int updateOnlineStat(key_t shmid, int fd, ONLINE_STAT stat);
-    int regOnlineShmat(key_t shmid, const char* name, int fd);
-    int rebuildOnlineShmat(key_t shmid);
+    int displayOnlineShmat();
+    int getOnlineList(std::string& content);
+    
+    int getOnlineStat(int fd);
+    int updateOnlineStat(int fd, ONLINE_STAT stat);
+    
+    int regOnlineShmat(const char* name, int fd);
+    int rebuildOnlineShmat();
     int calOnlineShmatBuffer(std::string& content);
 
 private:
-    std::map<std::string,OnlineInfo> mapOnline;
+    
+    char* _shAddr;
+    key_t _shmid;
+    std::map<int,OnlineInfo> mapOnline;
 };
 
 #endif /* defined(__myThriftApp__OnlineLogic__) */
