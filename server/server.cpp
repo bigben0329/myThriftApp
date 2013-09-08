@@ -4,17 +4,21 @@
 #include<sys/stat.h>
 #include<netinet/in.h>  //定义数据结构sockaddr_in
 #include<sys/socket.h>  //提供socket函数及数据结构
-#include<string.h>
 #include<unistd.h>
 #include<signal.h>
 #include<sys/ipc.h>
 #include<errno.h>
 #include<sys/shm.h>
 #include<time.h>
+#include <string>
+
+#include "OnlineLogic.h"
+
+using namespace std;
+
 #define PERM S_IRUSR|S_IWUSR  
 #define MYPORT 3490  //宏定义定义通信端口
 #define BACKLOG 10 //宏定义，定义服务程序可以连接的最大客户数量
-
 
 //宏定义，当客户端连接服务端时，想客户发送此欢迎字符串
 #define WELCOME "|----------Welcome to the plane room! ----------|"
@@ -104,57 +108,8 @@ int bindPort(unsigned short int port)
     return sockfd;
 }
 
-//reg user info
-key_t initOnlineShmat()
-{
-    key_t shmid = shm_create();
-    return shmid;
-}
 
-int regOnlineShmat(key_t shmid, const char* name)
-{
-    char *r_addr = shmat(shmid, 0, 0);
-    printf("online shmat init:%s\n",r_addr);
-    
-    char *delims={ "|" };
-    char *p=strtok(r_addr,delims);
-    while(p!=NULL)
-    {
-        printf("word: %s\n",p);
-        if( 0 == strcmp( p , name) )
-        {
-            printf("user %s is exist!\n", name);
-            return 0;
-        }
-        p=strtok(NULL,delims);
-    }
-    
-    char reginfo[128] = {0};
-    snprintf(reginfo, sizeof(reginfo), "%s|", name);
-    strcat(r_addr , reginfo);
-    
-    printf("online shmat end:%s\n",r_addr);
-    return 0;
-}
-
-
-int displayOnlineShmat(key_t shmid)
-{
-    char *r_addr = shmat(shmid, 0, 0);
-    printf("%s\n",r_addr);
-    
-    char *delims={ "|" };
-    char *p=strtok(r_addr,delims);
-    while(p!=NULL){
-        printf("word: %s\n",p);
-        p=strtok(NULL,delims);
-    }
-    printf("%s\n",r_addr);
-    
-    return 0;
-}
-
-
+COnlineLogic g_onlineLogic;
 int main(int argc, char *argv[])
 {
     int clientfd;
@@ -167,10 +122,11 @@ int main(int argc, char *argv[])
     key_t shmid, onlineShmid;
     char *r_addr, *w_addr;
     shmid = shm_create();
-    w_addr = shmat(shmid, 0, 0);
-    r_addr = shmat(shmid, 0, 0);
+    w_addr = (char*)shmat(shmid, 0, 0);
+    r_addr = (char*)shmat(shmid, 0, 0);
     
-    onlineShmid = initOnlineShmat();
+    //init online info
+    onlineShmid = g_onlineLogic.initOnlineShmat();
     
     // //定义临时存储区
     char *temp, *time_str;
@@ -190,7 +146,7 @@ int main(int argc, char *argv[])
         
         
         //接收客户端连接
-        int sin_size = 0;
+        socklen_t sin_size = 0;
         struct sockaddr_in their_addr;
         if((clientfd = accept(sockfd,(struct sockaddr*)&their_addr,&sin_size)) == -1)
         {
@@ -198,7 +154,7 @@ int main(int argc, char *argv[])
             exit(1);
         }
         printf("discriptor:%d\n",clientfd);
-        printf("accept from:%d\n",inet_ntoa(their_addr.sin_addr));
+        
         
         //发送问候信息
         send(clientfd, WELCOME, strlen(WELCOME), 0);
@@ -214,7 +170,6 @@ int main(int argc, char *argv[])
             
             //再次创建子进程
             pid_t pid = fork();
-            bool bBeRequested = false;
             while(1)
             {
                 //父进程用于接收信息
@@ -237,7 +192,6 @@ int main(int argc, char *argv[])
                     //write buf's data to share memory
                     memset(w_addr, '\0', 1024);
                     strncpy(w_addr, buf, 1024);
-                    bBeRequested = true;
                     printf("w_addr->%s\n",w_addr);
                     
                     
@@ -263,7 +217,7 @@ int main(int argc, char *argv[])
                         memset(r_addr, '\0', 255);
                         printf("temp:%s\n",temp);
 
-                        char *delims = { "@" };
+                        const char *delims = { "@" };
                         char *cmd = strtok( temp, delims);
                         if( NULL == cmd )
                         {
@@ -285,10 +239,9 @@ int main(int argc, char *argv[])
                         
                         if( 0 == strcmp(cmd, "reg") )
                         {
-                            regOnlineShmat(onlineShmid, rbody);
+                            g_onlineLogic.regOnlineShmat(onlineShmid, rbody, clientfd);
                         }
                         
-
                         //send temp buffer
                         //if(send(clientfd,temp,strlen(temp),0) == -1)
                         //{

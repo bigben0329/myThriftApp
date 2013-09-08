@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E836BD717DC3748000397D2 /* bulletin_board.c in Sources */ = {isa = PBXBuildFile; fileRef = 9E836BD317DC3748000397D2 /* bulletin_board.c */; };
+		9E836BD817DC3748000397D2 /* idl_types.c in Sources */ = {isa = PBXBuildFile; fileRef = 9E836BD517DC3748000397D2 /* idl_types.c */; };
+		9E836BDE17DC3758000397D2 /* client in Resources */ = {isa = PBXBuildFile; fileRef = 9E836BDA17DC3758000397D2 /* client */; };
+		9E836BDF17DC3758000397D2 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 9E836BDB17DC3758000397D2 /* client.c */; };
+		9E836BE017DC3758000397D2 /* server in Resources */ = {isa = PBXBuildFile; fileRef = 9E836BDC17DC3758000397D2 /* server */; };
+		9E836BE117DC3758000397D2 /* server.c in Sources */ = {isa = PBXBuildFile; fileRef = 9E836BDD17DC3758000397D2 /* server.c */; };
+		9E836BF417DC652B000397D2 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E836BF317DC652B000397D2 /* server.cpp */; };
+		9E836BF717DC7B0A000397D2 /* OnlineLogic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E836BF517DC7B0A000397D2 /* OnlineLogic.cpp */; };
 		CB972BFB14F47CCE00C93A6A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB972BFA14F47CCE00C93A6A /* UIKit.framework */; };
 		CB972BFD14F47CCE00C93A6A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB972BFC14F47CCE00C93A6A /* Foundation.framework */; };
 		CB972BFF14F47CCE00C93A6A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB972BFE14F47CCE00C93A6A /* CoreGraphics.framework */; };
@@ -32,6 +40,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9E836BD317DC3748000397D2 /* bulletin_board.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bulletin_board.c; sourceTree = "<group>"; };
+		9E836BD417DC3748000397D2 /* bulletin_board.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bulletin_board.h; sourceTree = "<group>"; };
+		9E836BD517DC3748000397D2 /* idl_types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = idl_types.c; sourceTree = "<group>"; };
+		9E836BD617DC3748000397D2 /* idl_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = idl_types.h; sourceTree = "<group>"; };
+		9E836BDA17DC3758000397D2 /* client */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = client; sourceTree = "<group>"; };
+		9E836BDB17DC3758000397D2 /* client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = client.c; sourceTree = "<group>"; };
+		9E836BDC17DC3758000397D2 /* server */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = server; sourceTree = "<group>"; };
+		9E836BDD17DC3758000397D2 /* server.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = server.c; sourceTree = "<group>"; };
+		9E836BF317DC652B000397D2 /* server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = server.cpp; sourceTree = "<group>"; };
+		9E836BF517DC7B0A000397D2 /* OnlineLogic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OnlineLogic.cpp; sourceTree = "<group>"; };
+		9E836BF617DC7B0A000397D2 /* OnlineLogic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OnlineLogic.h; sourceTree = "<group>"; };
 		CB972BF614F47CCE00C93A6A /* myThriftApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myThriftApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB972BFA14F47CCE00C93A6A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CB972BFC14F47CCE00C93A6A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -100,9 +119,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9E836BD217DC3748000397D2 /* gen-c_glib */ = {
+			isa = PBXGroup;
+			children = (
+				9E836BD317DC3748000397D2 /* bulletin_board.c */,
+				9E836BD417DC3748000397D2 /* bulletin_board.h */,
+				9E836BD517DC3748000397D2 /* idl_types.c */,
+				9E836BD617DC3748000397D2 /* idl_types.h */,
+			);
+			path = "gen-c_glib";
+			sourceTree = "<group>";
+		};
+		9E836BD917DC3758000397D2 /* server */ = {
+			isa = PBXGroup;
+			children = (
+				9E836BF317DC652B000397D2 /* server.cpp */,
+				9E836BDA17DC3758000397D2 /* client */,
+				9E836BDB17DC3758000397D2 /* client.c */,
+				9E836BDC17DC3758000397D2 /* server */,
+				9E836BDD17DC3758000397D2 /* server.c */,
+				9E836BF517DC7B0A000397D2 /* OnlineLogic.cpp */,
+				9E836BF617DC7B0A000397D2 /* OnlineLogic.h */,
+			);
+			path = server;
+			sourceTree = "<group>";
+		};
 		CB972BEB14F47CCE00C93A6A = {
 			isa = PBXGroup;
 			children = (
+				9E836BD917DC3758000397D2 /* server */,
+				9E836BD217DC3748000397D2 /* gen-c_glib */,
 				CB972C4814F47D3100C93A6A /* idl.thrift */,
 				CB972C4914F47D3100C93A6A /* gen-cocoa */,
 				CB972C4C14F47D3100C93A6A /* gen-java */,
@@ -290,6 +336,8 @@
 			files = (
 				CB972C0514F47CCE00C93A6A /* InfoPlist.strings in Resources */,
 				CB972C5114F47D9A00C93A6A /* ViewController.xib in Resources */,
+				9E836BDE17DC3758000397D2 /* client in Resources */,
+				9E836BE017DC3758000397D2 /* server in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +365,12 @@
 				CB972C4614F47D0300C93A6A /* TTransportException.m in Sources */,
 				CB972C4714F47D0300C93A6A /* TSharedProcessorFactory.m in Sources */,
 				CB972C4F14F47D3800C93A6A /* idl.m in Sources */,
+				9E836BD717DC3748000397D2 /* bulletin_board.c in Sources */,
+				9E836BD817DC3748000397D2 /* idl_types.c in Sources */,
+				9E836BDF17DC3758000397D2 /* client.c in Sources */,
+				9E836BE117DC3758000397D2 /* server.c in Sources */,
+				9E836BF417DC652B000397D2 /* server.cpp in Sources */,
+				9E836BF717DC7B0A000397D2 /* OnlineLogic.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
