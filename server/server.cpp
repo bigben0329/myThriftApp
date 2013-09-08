@@ -185,6 +185,8 @@ int main(int argc, char *argv[])
                         perror("recv1 error");
                         close(clientfd);
                         raise(SIGKILL);
+                        g_onlineLogic.updateOnlineStat(onlineShmid, clientfd, ONLINE_STAT_OFF);
+                        g_onlineLogic.displayOnlineShmat(onlineShmid);
                         exit(1);
                     }
                     
@@ -240,6 +242,7 @@ int main(int argc, char *argv[])
                         if( 0 == strcmp(cmd, "reg") )
                         {
                             g_onlineLogic.regOnlineShmat(onlineShmid, rbody, clientfd);
+                            g_onlineLogic.displayOnlineShmat(onlineShmid);
                         }
                         
                         //send temp buffer

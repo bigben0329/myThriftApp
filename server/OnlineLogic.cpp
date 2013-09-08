@@ -35,9 +35,11 @@ void OnlineInfo::encode(std::string& content)
 {
     content.clear();
     char Tmp[128] = {0};
-    snprintf(Tmp, sizeof(Tmp), "%s%s%d%s",
+    snprintf(Tmp, sizeof(Tmp), "%s%s%d%s%d%s",
              _name.c_str(), SPR_CHAR_ATTR
-             ,_fd,SPR_CHAR_ATTR);
+             ,_fd,SPR_CHAR_ATTR
+             ,_stat,SPR_CHAR_ATTR);
+    
     content = std::string(Tmp);
 }
 
@@ -73,6 +75,20 @@ int OnlineInfo::decode(const std::string content)
     _fd = atoi(tmp.c_str());
     pos1 = pos2 + 1;
     
+    
+    //get stat value
+    pos2 = content.find(SPR_CHAR_ATTR, pos1);
+    if(string::npos == pos2)
+    {
+        printf("no _stat!\n");
+        return -3;
+    }
+    
+    tmp = content.substr(pos1, pos2 - pos1);
+    printf("_stat: %s\n",tmp.c_str());
+    _stat = atoi(tmp.c_str());
+    pos1 = pos2 + 1;
+    
     return 0;
 }
 
@@ -100,6 +116,36 @@ key_t COnlineLogic::initOnlineShmat()
     return shmid;
 }
 
+int COnlineLogic::updateOnlineStat(key_t shmid, int fd, ONLINE_STAT stat)
+{
+    char *r_addr = (char*)shmat(shmid, 0, 0);
+    printf("online shmat begin:%s\n",r_addr);
+    
+    bool bUpdate = false;
+    rebuildOnlineShmat(shmid);
+    typeof( mapOnline.begin() ) itInfo = mapOnline.begin();
+    for(; itInfo != mapOnline.end() ; itInfo++)
+    {
+        if( itInfo->second._fd == fd )
+        {
+            itInfo->second._stat = stat;
+            bUpdate = true;
+            break;
+        }
+    }
+    
+    if(bUpdate)
+    {
+        std::string content;
+        calOnlineShmatBuffer(content);
+        memcpy(r_addr, (char*)content.c_str(), content.length());
+    }
+    
+    printf("online shmat end:%s\n",r_addr);
+    return 0;
+
+}
+
 int COnlineLogic::regOnlineShmat(key_t shmid, const char* name, int fd)
 {
     char *r_addr = (char*)shmat(shmid, 0, 0);
@@ -112,6 +158,7 @@ int COnlineLogic::regOnlineShmat(key_t shmid, const char* name, int fd)
         OnlineInfo info;
         info._name = name;
         info._fd = fd;
+        info._stat = ONLINE_STAT_ON;
         mapOnline.insert(make_pair(info._name, info));
         
         std::string content;
@@ -144,6 +191,25 @@ int COnlineLogic::rebuildOnlineShmat(key_t shmid)
             mapOnline.insert(make_pair(info._name, info));
         }
         
+        pos1 = pos2 + 1;
+        pos2 = content.find(SPR_CHAR_ITEM, pos1);
+    }
+    
+    return 0;
+}
+
+
+int COnlineLogic::displayOnlineShmat(key_t shmid)
+{
+    char *r_addr = (char*)shmat(shmid, 0, 0);
+    std::string content = std::string(r_addr);
+    string::size_type pos1 = 0, pos2;
+    
+    pos2 = content.find(SPR_CHAR_ITEM);
+    while (string::npos != pos2)
+    {
+        std::string temp = content.substr(pos1, pos2 - pos1);
+        printf("display: %s\n",temp.c_str());
         pos1 = pos2 + 1;
         pos2 = content.find(SPR_CHAR_ITEM, pos1);
     }
