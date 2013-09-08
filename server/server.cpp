@@ -10,8 +10,8 @@
 #include<errno.h>
 #include<sys/shm.h>
 #include<time.h>
-#include <string>
-
+#include<string>
+#include<string.h>
 #include "OnlineLogic.h"
 
 using namespace std;
@@ -111,6 +111,7 @@ int bindPort(unsigned short int port)
 int sendResponse(int fd, std::string cmd, std::string rps)
 {
     std::string response = cmd + "@" + rps;
+    printf("sendResponse fd:%d response:%s\n", fd, response.c_str());
     if(send(fd,response.c_str(),response.length(),0) == -1)
     {
         perror("send error");

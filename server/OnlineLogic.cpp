@@ -20,7 +20,8 @@
 #include<errno.h>
 #include<sys/shm.h>
 #include<time.h>
-#include <string>
+#include<string>
+#include<string.h>
 
 using namespace std;
 
@@ -271,7 +272,7 @@ int COnlineLogic::getOnlineList(std::string& list)
         printf("display: %s\n",temp.c_str());
         
         OnlineInfo info;
-        if( 0 == info.decode(temp) && info._stat == ONLINE_STAT_ON)
+        if( 0 == info.decode(temp) && info._stat == ONLINE_STAT_ON )
         {
             list+=info._name;
             list+="\n";
