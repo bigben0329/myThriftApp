@@ -9,7 +9,6 @@
 #ifndef __myThriftApp__OnlineLogic__
 #define __myThriftApp__OnlineLogic__
 
-#include <iostream>
 #include <string>
 #include <map>
 #include<sys/shm.h>
@@ -48,7 +47,7 @@ public:
     COnlineLogic();
     ~COnlineLogic();
     
-    key_t initOnlineShmat();
+    int initOnlineShmat(key_t shmid);
     int displayOnlineShmat();
     int getOnlineList(std::string& content);
     

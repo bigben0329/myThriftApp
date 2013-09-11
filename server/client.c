@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
          //父进程用于发送信息
 
        //get_cur_time(time_str);
-
-       strcpy(buf,argv[3]);
-       strcat(buf,":");
+       memset(buf,0,120);
+       //strcpy(buf,argv[3]);
+       //strcat(buf,":");
        memset(buf_r,0,100);
        //gets(buf_r);
        fgets(buf_r,100,stdin);

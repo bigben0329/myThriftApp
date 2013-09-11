@@ -106,18 +106,11 @@ COnlineLogic::~COnlineLogic()
 }
 
 
-key_t COnlineLogic::initOnlineShmat()
+int COnlineLogic::initOnlineShmat(key_t shmid)
 {
-    key_t shmid;
-    if((shmid = shmget(IPC_PRIVATE,1024,S_IRUSR|S_IWUSR)) == -1)
-    {
-        fprintf(stderr,"Create Share Memory Error:%s\n\a",strerror(errno));
-        exit(1);
-    }
-    
     _shAddr = (char*)shmat(shmid, 0, 0);
     _shmid = shmid;
-    return shmid;
+    return 0;
 }
 
 int COnlineLogic::updateOnlineStat(int fd, ONLINE_STAT stat)
