@@ -8,6 +8,8 @@
 
 #include "comm_func.h"
 #include <iostream>
+#include <stdlib.h>
+#include <string.h>
 
 CCommFunc::CCommFunc()
 {

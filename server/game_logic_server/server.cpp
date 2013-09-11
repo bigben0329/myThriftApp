@@ -1,17 +1,17 @@
-#include<stdio.h>   
-#include<stdlib.h>
-#include<sys/types.h>  //数据类型定义
-#include<sys/stat.h>
-#include<netinet/in.h>  //定义数据结构sockaddr_in
-#include<sys/socket.h>  //提供socket函数及数据结构
-#include<unistd.h>
-#include<signal.h>
-#include<sys/ipc.h>
-#include<errno.h>
-#include<sys/shm.h>
-#include<time.h>
-#include<string>
-#include<string.h>
+#include <stdio.h>   
+#include <stdlib.h>
+#include <sys/types.h>  //数据类型定义
+#include <sys/stat.h>
+#include <netinet/in.h>  //定义数据结构sockaddr_in
+#include <sys/socket.h>  //提供socket函数及数据结构
+#include <unistd.h>
+#include <signal.h>
+#include <sys/ipc.h>
+#include <errno.h>
+#include <sys/shm.h>
+#include <time.h>
+#include <string>
+#include <string.h>
 
 #include "server.h"
 #include "OnlineLogic.h"
@@ -85,29 +85,15 @@ int main(int argc, char *argv[])
     
     //声明在线逻辑变量
     COnlineLogic g_onlineLogic;
+    key_t onlineShmid = svr.shm_create();
+    onlineShmid = g_onlineLogic.initOnlineShmat(onlineShmid);
+    
     
     int clientfd;
     char *buf;
 
     //绑定端口
     int svrfd = svr.bindPort(MYPORT);
-    
-    
-    //创建数据交换数据区
-    key_t shmid= svr.shm_create();
-    char *r_addr, *w_addr;
-    w_addr = (char*)shmat(shmid, 0, 0);
-    r_addr = (char*)shmat(shmid, 0, 0);
-    
-    //创建在线数据交换组
-    key_t onlineShmid = svr.shm_create();
-    onlineShmid = g_onlineLogic.initOnlineShmat(onlineShmid);
-    
-    // //定义临时存储区
-    char *temp, *data;
-    temp = (char *)malloc(255);
-    data=(char *)malloc(20);
-    
     
     //在指定端口上监听
     if(listen(svrfd,BACKLOG) == -1)
@@ -116,6 +102,12 @@ int main(int argc, char *argv[])
         exit(1);
     }
     printf("listening svrfd %d......\n", svrfd);
+    
+    
+    // //定义临时存储区
+    char *temp, *data;
+    temp = (char *)malloc(255);
+    data=(char *)malloc(20);
     
     while(1)
     {
@@ -167,12 +159,12 @@ int main(int argc, char *argv[])
                     //write buf's data to share memory
                     //memset(w_addr, '\0', 1024);
                     //strncpy(w_addr, buf, 1024);
-                    printf("w_add:%s\n", w_addr);
+                    //printf("w_add:%s\n", w_addr);
                     
                     //strcat time info
                     CCommFunc::get_cur_time(data);
-                    strcat(buf,data);
-                    printf("buf:%s n",buf);
+                    //strcat(buf,data);
+                    printf("buf:%s data:%s\n",buf, data);
                 }
                 
                 //子进程用于发送信息
@@ -189,11 +181,11 @@ int main(int argc, char *argv[])
                     //swap shmat buffer
                     //if(strcmp(temp,r_addr) != 0)
                     {
-                        printf("grandchild process begin app logic...\n");
-                        printf("swap buffer!r_addr:|%s| temp:|%s|\n", r_addr, temp);
+                        //printf("grandchild process begin app logic...\n");
+                        //printf("swap buffer!r_addr:|%s| temp:|%s|\n", r_addr, temp);
                         CCommFunc::get_cur_time(data);
                         //strcat(r_addr,data);
-                        strcpy(temp,r_addr);
+                        strcpy(temp,buf);
                         printf("temp:%s\n",temp);
 
                         const char *delims = { "@" };
@@ -202,7 +194,7 @@ int main(int argc, char *argv[])
                         {
                             printf("temp:%s parse error,no cmd!\n", temp);
                             memset(temp, '\0', 1024);
-                            memset(r_addr, '\0', 1024);
+                            //memset(r_addr, '\0', 1024);
                             continue;
                         }
                         
@@ -212,7 +204,7 @@ int main(int argc, char *argv[])
                         {
                             printf("temp:%s parse error,no rbody!\n", temp);
                             memset(temp, '\0', 1024);
-                            memset(r_addr, '\0', 1024);
+                            //memset(r_addr, '\0', 1024);
                             continue;
                         }
                         printf("cmd:%s rbody:%s\n", cmd, rbody);
@@ -236,7 +228,7 @@ int main(int argc, char *argv[])
                             printf("can not found func for %s \n", cmd);
                         }
                         
-                        memset(r_addr, '\0', 1024);
+                        //memset(r_addr, '\0', 1024);
                         memset(temp, '\0', 255);
                     }
                 }
