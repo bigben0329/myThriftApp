@@ -23,6 +23,18 @@ using namespace std;
 #define true 1
 #define false 0
 
+#define LISTENQ     1024         /* 2nd argument to listen () */
+#define MAXLINE     4096         /* max text line length */
+
+#ifndef INFTIM
+#define INFTIM          (-1)     /* infinite poll timeout */
+#ifdef HAVE_POLL_H
+#define INFTIM_UNPH              /* tell unpxti.h we defined it */
+#endif
+#endif
+
+
+
 #define  GET_JSON_STRING(p , len) \
     Json::Value req;\
     if (len > 0) \

@@ -65,18 +65,18 @@ int CService::BindPort(unsigned short int port)
     
     if(bind(sockfd,(struct sockaddr*)&my_addr,sizeof(struct sockaddr)) == -1)
     {
-        printf("bind");
+        printf("bind sockfd %d error\n", sockfd);
         exit(1);
     }
     
-    printf("bing fd:%d success!\n", sockfd);
+    printf("bing sockfd %d success!\n", sockfd);
     return sockfd;
 }
 
 
 int CService::Listen(int fd)
 {
-    if(listen(fd,BACKLOG) == -1)
+    if(listen(fd,LISTENQ) == -1)
     {
         printf("listen error");
         return -1;
