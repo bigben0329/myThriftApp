@@ -28,7 +28,9 @@ using namespace std;
 OnlineInfo::OnlineInfo()
 {
     _name.clear();
-    
+    _fd = -1;
+    _vsfd = -1;
+    _stat = ONLINE_STAT_NEW;
 }
 
 void OnlineInfo::encode(std::string& content)
@@ -129,7 +131,7 @@ int COnlineLogic::initOnlineShmat(key_t shmid)
 
 int COnlineLogic::updateOnlineStat(int fd, ONLINE_STAT stat)
 {
-    printf("updateOnlineStat shmat begin:%s fd:%d stat:%d\n",
+    printf("######updateOnlineStat shmat begin:%s fd:%d stat:%d------\n",
            _shAddr, fd, stat);
     
     bool bUpdate = false;
@@ -151,7 +153,7 @@ int COnlineLogic::updateOnlineStat(int fd, ONLINE_STAT stat)
         rebuildOnlineShmat();
     }
     
-    printf("updateOnlineStat shmat end:%s\n",_shAddr);
+    printf("######updateOnlineStat shmat end:%s-------\n",_shAddr);
     return 0;
 
 }
@@ -179,7 +181,7 @@ int COnlineLogic::getOnlineStat( int fd)
 
 int COnlineLogic::regOnlineShmat(const char* name, int fd)
 {
-    printf("regOnlineShmat shmat begin:%s name:%s fd:%d\n",
+    printf("######regOnlineShmat shmat begin |%s| name |%s| fd| %d|\n",
            _shAddr, name, fd);
     
     bool bUpdate = false;
@@ -214,7 +216,7 @@ int COnlineLogic::regOnlineShmat(const char* name, int fd)
         rebuildOnlineShmat();
     }
     
-    printf("regOnlineShmat shmat end:%s\n",_shAddr);
+    printf("######regOnlineShmat shmat end |%s|\n",_shAddr);
     return 0;
 }
 
@@ -248,7 +250,7 @@ int COnlineLogic::rebuildOnlineShmat()
 
 int COnlineLogic::displayOnlineShmat()
 {
-    printf("displayOnlineShmat shmat begin:%s\n",_shAddr);
+    printf("######displayOnlineShmat shmat begin |%s|\n",_shAddr);
     
     std::string content = std::string(_shAddr);
     string::size_type pos1 = 0, pos2;
@@ -256,7 +258,7 @@ int COnlineLogic::displayOnlineShmat()
     while (string::npos != pos2)
     {
         std::string temp = content.substr(pos1, pos2 - pos1);
-        printf("display: %s\n",temp.c_str());
+        printf("########display %s ...\n",temp.c_str());
         pos1 = pos2 + 1;
         pos2 = content.find(SPR_CHAR_ITEM, pos1);
     }
@@ -267,7 +269,7 @@ int COnlineLogic::displayOnlineShmat()
 
 int COnlineLogic::getOnlineList(std::string& list)
 {
-    printf("getOnlineList shmat begin:%s\n",_shAddr);
+    printf("######getOnlineList shmat begin |%s|\n",_shAddr);
     
     list.clear();
     std::string content = std::string(_shAddr);
@@ -276,7 +278,7 @@ int COnlineLogic::getOnlineList(std::string& list)
     while (string::npos != pos2)
     {
         std::string temp = content.substr(pos1, pos2 - pos1);
-        printf("display: %s\n",temp.c_str());
+        printf("######display %s...\n",temp.c_str());
         
         OnlineInfo info;
         if( 0 == info.decode(temp) && info._stat == ONLINE_STAT_ON )
@@ -310,7 +312,7 @@ int COnlineLogic::calOnlineShmatBuffer(std::string& content)
 
 int COnlineLogic::vs(int fd,const std::string vsname)
 {
-    printf("COnlineLogic vs fd:%d name:%s\n", fd, vsname.c_str());
+    printf("######COnlineLogic vs fd |%d| name |%s|\n", fd, vsname.c_str());
     
     bool bUpdate = false, bFound = false;
     int iEnemyFd = 0;
@@ -346,14 +348,14 @@ int COnlineLogic::vs(int fd,const std::string vsname)
         rebuildOnlineShmat();
     }
     
-    printf("COnlineLogic vs end bUpdate:%d\n", bUpdate);
+    printf("######COnlineLogic vs end bUpdate |%d|\n", bUpdate);
     return 0;
 }
 
 
 int COnlineLogic::getVsFD(int fd)
 {
-    printf("getVsFD begin fd:%d\n", fd);
+    printf("######getVsFD begin fd |%d|\n", fd);
     
     rebuildOnlineShmat();
     typeof( mapOnline.begin() ) itMy = mapOnline.find(fd);
@@ -367,6 +369,6 @@ int COnlineLogic::getVsFD(int fd)
         return -1;
     }
 
-    printf("getVsFD end\n");
+    printf("######getVsFD end\n");
 }
 

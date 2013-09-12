@@ -67,8 +67,9 @@ void CCommFunc::get_cur_time(char * time_str)
 }
 
 
-int CCommFunc::splitRequest(char* temp, char* cmd, char* body)
+int CCommFunc::splitRequest(char* temp, std::string& scmd, std::string& sbody)
 {
+    char *cmd, *body;
     const char *delims = { "@" };
     cmd = strtok( temp, delims);
     if( NULL == cmd )
@@ -85,6 +86,9 @@ int CCommFunc::splitRequest(char* temp, char* cmd, char* body)
         memset(temp, '\0', 1024);
         return -2;
     }
+    
+    scmd = std::string(cmd);
+    sbody = std::string(body);
     
     return 0;
 }

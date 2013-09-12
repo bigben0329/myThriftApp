@@ -80,13 +80,14 @@ int main(int argc, char *argv[])
             
             while(1)
             {
+                printf("######-------- cmd process start ---------######\n");
                 int recvbytes = 0;
                 memset(recbuf,0,255);
                 
                 //客户端主动关闭
                 if((recvbytes = recv(clientfd,recbuf,255,0)) <= 0)
                 {
-                    printf("clientfd %d recv error \n", clientfd);
+                    printf("######clientfd %d recv error \n", clientfd);
                     
                     g_onlineLogic.updateOnlineStat(clientfd, ONLINE_STAT_OFF);
                     g_onlineLogic.displayOnlineShmat();
@@ -98,28 +99,28 @@ int main(int argc, char *argv[])
                 
                 //打印收包信息
                 CCommFunc::get_cur_time(data);
-                printf("Data:%s\n",data);
-                printf("Revice Buffer:%s\n",recbuf);
+                printf("######Data:%s\n",data);
+                printf("######Revice Buffer:%s\n",recbuf);
             
                 //解析请求命令字与请求包体
-                char *cmd, *body;
+                std::string cmd, body;
                 ret = CCommFunc::splitRequest( recbuf, cmd, body);
                 if( 0 != ret )
                 {
-                    printf("CCommFunc::splitRequest revbuffer %s ret %d\n", recbuf, ret);
+                    printf("######CCommFunc::splitRequest revbuffer %s ret %d\n", recbuf, ret);
                     continue;
                 }
-                printf("Cmd:%s Body:%s\n", cmd, body);
+                printf("######Cmd:%s Body:%s\n", cmd.c_str(), body.c_str());
                 
                 //---------------------业务逻辑-----------------------
                 //用户注册
-                if( 0 == strcmp(cmd, "reg") )
+                if( 0 == strcmp(cmd.c_str(), "reg") )
                 {
-                    g_onlineLogic.regOnlineShmat(body, clientfd);
+                    g_onlineLogic.regOnlineShmat(body.c_str(), clientfd);
                     g_onlineLogic.displayOnlineShmat();
                 }
                 //获取在线列表
-                else if( 0 == strcmp(cmd, "onlineinfo") )
+                else if( 0 == strcmp(cmd.c_str(), "onlineinfo") )
                 {
                     std::string list;
                     g_onlineLogic.getOnlineList(list);
@@ -128,27 +129,29 @@ int main(int argc, char *argv[])
                     svr.sendResponse(clientfd,cmd,list);
                 }
                 //选择对手
-                else if( 0 == strcmp(cmd, "vs") )
+                else if( 0 == strcmp(cmd.c_str(), "vs") )
                 {
                     g_onlineLogic.vs(clientfd, body);
                     g_onlineLogic.displayOnlineShmat();
                 }
                 //攻击对手
-                else if( 0 == strcmp(cmd, "hit") )
+                else if( 0 == strcmp(cmd.c_str(), "hit") )
                 {
-                    GET_JSON_STRING(body, strlen(body));
                     int vsfd = g_onlineLogic.getVsFD(clientfd);
+                    printf("######clientfd |%d| vsfd |%d|\n", clientfd, vsfd);
                     if( 0 != vsfd )
                     {
                         //send temp buffer
-                        svr.sendResponse(clientfd,cmd,body);
+                        svr.sendResponse(vsfd,cmd,body);
                     }
                 }
                 else
                 {
-                    printf("can not found func for %s \n", cmd);
+                    printf("######can not found func for %s \n", cmd.c_str());
                 }
                 //---------------------业务逻辑-----------------------
+                printf("######-------- cmd process end ---------######\n\n\n");
+                
             }
             printf("###----------- child process stoped -------------###\n");
         }

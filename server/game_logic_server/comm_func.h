@@ -9,6 +9,10 @@
 #ifndef __myThriftApp__comm_func__
 #define __myThriftApp__comm_func__
 
+#include <string>
+
+using namespace std;
+
 class CCommFunc
 {
 public:
@@ -17,7 +21,7 @@ public:
     
     static void itoa(int i,char*string);
     static void get_cur_time(char * time_str);
-    static int splitRequest(char* temp, char* cmd, char* body);
+    static int splitRequest(char* temp, std::string& scmd, std::string& sbody);
 };
 
 

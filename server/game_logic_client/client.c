@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 {
    struct sockaddr_in clientaddr;//定义地址结构
    pid_t pid;
-   int clientfd,sendbytes,recvbytes;//定义客户端套接字
+   int clientfd,sendbytes;//定义客户端套接字
    struct hostent *host;
    char *buf,*buf_r; 
    if(argc < 4)
