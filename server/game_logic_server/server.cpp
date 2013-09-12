@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
             printf("child process working...\n");
             
             //再次创建子进程
-            pid_t pid = fork();
+            //pid_t pid = fork();
             while(1)
             {
                 //父进程用于接收信息
@@ -222,6 +222,21 @@ int main(int argc, char *argv[])
                             
                             //send temp buffer
                             svr.sendResponse(clientfd,cmd,list);
+                        }
+                        else if( 0 == strcmp(cmd, "vs") )
+                        {
+                            g_onlineLogic.vs(clientfd, rbody);
+                            g_onlineLogic.displayOnlineShmat();
+                        }
+                        else if( 0 == strcmp(cmd, "hit") )
+                        {
+                            GET_JSON_STRING(rbody, strlen(rbody));
+                            int vsfd = g_onlineLogic.getVsFD(clientfd);
+                            if( 0 != vsfd )
+                            {
+                                //send temp buffer
+                                svr.sendResponse(clientfd,cmd,rbody);
+                            }
                         }
                         else
                         {

@@ -36,10 +36,11 @@ void OnlineInfo::encode(std::string& content)
 {
     content.clear();
     char Tmp[128] = {0};
-    snprintf(Tmp, sizeof(Tmp), "%s%s%d%s%d%s",
+    snprintf(Tmp, sizeof(Tmp), "%s%s%d%s%d%s%d%s",
              _name.c_str(), SPR_CHAR_ATTR
              ,_fd,SPR_CHAR_ATTR
-             ,_stat,SPR_CHAR_ATTR);
+             ,_stat,SPR_CHAR_ATTR
+             ,_vsfd,SPR_CHAR_ATTR);
     
     content = std::string(Tmp);
 }
@@ -89,7 +90,21 @@ int OnlineInfo::decode(const std::string content)
     //printf("_stat: %s\n",tmp.c_str());
     _stat = atoi(tmp.c_str());
     pos1 = pos2 + 1;
+
     
+    //get vsfd value
+    pos2 = content.find(SPR_CHAR_ATTR, pos1);
+    if(string::npos == pos2)
+    {
+        printf("no _vsfd!\n");
+        return -3;
+    }
+    
+    tmp = content.substr(pos1, pos2 - pos1);
+    //printf("_vsfd: %s\n",tmp.c_str());
+    _vsfd = atoi(tmp.c_str());
+    pos1 = pos2 + 1;
+
     return 0;
 }
 
@@ -291,5 +306,68 @@ int COnlineLogic::calOnlineShmatBuffer(std::string& content)
         content+=item;
         content+=SPR_CHAR_ITEM;
     }
+    return 0;
+}
+
+int COnlineLogic::vs(int fd,const std::string vsname)
+{
+    printf("COnlineLogic vs fd:%d name:%s\n", fd, vsname.c_str());
+    
+    bool bUpdate = false, bFound = false;
+    int iEnemyFd = 0;
+    rebuildOnlineShmat();
+    typeof( mapOnline.begin() ) itMap = mapOnline.begin();
+    for( ; itMap != mapOnline.end(); itMap++ )
+    {
+        if( itMap->second._name == vsname )
+        {
+            itMap->second._vsfd = fd;
+            iEnemyFd = itMap->second._fd;
+            bFound = true;
+        }
+    }
+    
+    
+    if( bFound )
+    {
+        typeof( mapOnline.begin() ) itMy = mapOnline.find(fd);
+        if( itMy != mapOnline.end() )
+        {
+            itMy->second._vsfd = iEnemyFd;
+            bUpdate = true;
+        }
+    }
+    
+    
+    if( bUpdate )
+    {
+        std::string content;
+        calOnlineShmatBuffer(content);
+        memcpy(_shAddr, (char*)content.c_str(), content.length());
+        rebuildOnlineShmat();
+    }
+    
+    printf("COnlineLogic vs end bUpdate:%d\n", bUpdate);
+    return 0;
+}
+
+
+int COnlineLogic::getVsFD(int fd)
+{
+    printf("getVsFD begin fd:%d\n", fd);
+    
+    rebuildOnlineShmat();
+    typeof( mapOnline.begin() ) itMy = mapOnline.find(fd);
+    if( itMy != mapOnline.end() )
+    {
+        return itMy->second._vsfd;
+    }
+    else
+    {
+        printf("can not found for myfd %d\n", fd);
+        return -1;
+    }
+
+    printf("getVsFD end\n");
 }
 

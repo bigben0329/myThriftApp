@@ -32,6 +32,7 @@ public:
     
     std::string _name;
     int _fd;
+    int _vsfd;
     int _stat;
     
 public:
@@ -57,7 +58,9 @@ public:
     int regOnlineShmat(const char* name, int fd);
     int rebuildOnlineShmat();
     int calOnlineShmatBuffer(std::string& content);
-
+    int getVsFD(int fd);
+    
+    int vs(int fd,const std::string vsname);
 private:
     
     char* _shAddr;
