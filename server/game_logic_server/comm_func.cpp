@@ -65,3 +65,26 @@ void CCommFunc::get_cur_time(char * time_str)
     strcat(time_str,")");
     free(time_tmp);
 }
+
+
+int CCommFunc::splitRequest(char* temp, char* cmd, char* body)
+{
+    const char *delims = { "@" };
+    cmd = strtok( temp, delims);
+    if( NULL == cmd )
+    {
+        printf("temp:%s parse error,no cmd!\n", temp);
+        memset(temp, '\0', 1024);
+        return -1;
+    }
+    
+    body = strtok( NULL, delims);
+    if( NULL == body )
+    {
+        printf("temp:%s parse error,no rbody!\n", temp);
+        memset(temp, '\0', 1024);
+        return -2;
+    }
+    
+    return 0;
+}

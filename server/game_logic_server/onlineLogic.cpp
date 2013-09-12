@@ -6,7 +6,7 @@
 //
 //
 
-#include "OnlineLogic.h"
+#include "onlineLogic.h"
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -24,7 +24,6 @@
 #include<string.h>
 
 using namespace std;
-
 
 OnlineInfo::OnlineInfo()
 {

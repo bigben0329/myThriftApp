@@ -3,7 +3,7 @@ AR=ar
 
 TARGET=./server
 
-SOURCES = comm_func.cpp OnlineLogic.cpp server.cpp
+SOURCES = comm_func.cpp onlineLogic.cpp serverLogic.cpp main.cpp
 
 OBJS=$(patsubst %.cpp,%.o, $(SOURCES))
 

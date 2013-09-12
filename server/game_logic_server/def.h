@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef myThriftApp_server_h
-#define myThriftApp_server_h
+#ifndef myThriftApp_def_h
+#define myThriftApp_def_h
 
 using namespace std;
 
@@ -18,7 +18,6 @@ using namespace std;
 //宏定义，当客户端连接服务端时，想客户发送此欢迎字符串
 #define WELCOME "|----------Welcome to the plane room! ----------|"
 
-#include "json.h"
 
 #define bool int
 #define true 1
@@ -40,24 +39,5 @@ using namespace std;
     }\
     *(p + len) = cTempEnd;\
     }
-
-
-class CService
-{
-public:
-    CService();
-    ~CService();
-
-public:
-    //创建共享内存
-    key_t shm_create();
-
-    //端口绑定函数,创建套接字，并绑定到指定端口
-    int bindPort(unsigned short int port);
-    
-    //发送回包信息
-    int sendResponse(int fd, std::string cmd, std::string rps);
-    
-};
 
 #endif
